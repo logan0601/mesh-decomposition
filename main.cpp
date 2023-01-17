@@ -7,9 +7,9 @@ int main()
     Model model;
     model.read("./data/dino.ply");
 
-    Solver solver(model);
+    Solver solver(model, 0);
     solver.solve();
 
-    model.write("./1.ply");
+    model.write("./out/dino.ply");
     return 0;
 }

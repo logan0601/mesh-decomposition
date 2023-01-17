@@ -1,29 +1,47 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
+#include <algorithm>
 #include "model.h"
 
-typedef std::pair<vector<int>, double> Pair_vd;
+#define NREP 4
+#define LEVEL 1
+
+using std::distance;
+using std::min_element;
+using std::max_element;
+
 
 class Solver
 {
 public:
-    int lnum;                   // label number
-    vector<int> labels;         // label for every face
-    vector<vector<int>> lmat;   // label matrix
+    Model& model;                   // temporal model
+    int fnum;                       // face number
+    int rnum;                       // repre number
+    int level;                      // iterate level
+    int lab_idx, fuz_idx;           // index
 
-    Model& model;               // temporal model
+    vector<int> fid;                // faces id
+    vector<int> rid;                // repre id
+    vector<int> unique;             // unique repre id
+    vector<vector<double>> dmat;    // distance matrix
+    vector<vector<double>> pmat;    // probability matrix
+    vector<vector<double>> cmat;    // cost matrix
 
-    Solver(Model& model_);
+    double avg_dis;                 // average distance
+    int old_lab;                    // old label for print
+
+    Solver(Model& mod_, int lev_, vector<int> fid_=vector<int>());
     void solve();
 
 private:
-    void kernel(int l);
-    Pair_vd init_seed(int l);
-    bool check(int l, vector<int>& seed, double avg_dis);
-    void assign(int l, vector<int>& seed);
-    void assign_fuzzy(int l, vector<int>& seed, std::map<Pair_ii, vector<int>>& fuzzy);
-
+    void initial_repre();
+    void compute_prob_matrix();
+    void assign();
+    void assign_fuzzy();
+    vector<int> recompute_repre();
+    bool check();
 };
+
 
 #endif // SOLVER_H
